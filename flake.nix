@@ -31,7 +31,7 @@
               hugo new site tmp
               mkdir -p ${themePath}
               cp -r $src/* ${themePath}
-              hugo -s tmp -c ${config} -d $out --noBuildLock
+              hugo -s tmp --config ${config} -d $out --noBuildLock
             '';
           };
       };
