@@ -18,6 +18,7 @@
     {
       packages.${system}.default = hugix.lib.generate {
         inherit system name theme;
+        content = ./content;
         cfg = {
           baseURL = "https://website.com";
           languageCode = "en-gb";

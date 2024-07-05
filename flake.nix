@@ -15,6 +15,7 @@
             theme,
             cfg,
             system,
+            content,
           }:
           let
             pkgs = import nixpkgs { inherit system; };
@@ -25,13 +26,19 @@
           pkgs.stdenv.mkDerivation {
             inherit name;
             dontInstall = true;
-            src = theme;
+            src = content;
             buildInputs = with pkgs; [ hugo ];
             buildPhase = ''
               hugo new site tmp
               mkdir -p ${themePath}
-              cp -r $src/* ${themePath}
-              hugo -s tmp --config ${config} -d $out --noBuildLock
+              cp -r ${theme}/* ${themePath}
+              hugo \
+              	-s tmp \
+              	-c $src \
+              	--config ${config} \
+              	-d $out \
+              	--noBuildLock \
+              	--minify
             '';
           };
       };
