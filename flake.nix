@@ -30,7 +30,6 @@
             buildPhase = ''
               hugo new site tmp
               mkdir -p ${themePath}
-              ls ${themePath}
               cp -r $src/* ${themePath}
               hugo -s tmp -c ${config} -d $out --noBuildLock
             '';
