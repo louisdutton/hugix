@@ -20,6 +20,7 @@
             pkgs = import nixpkgs { inherit system; };
             toml = pkgs.formats.toml { };
             config = toml.generate "hugo.toml" cfg;
+            themePath = "tmp/themes/${cfg.theme}";
           in
           pkgs.stdenv.mkDerivation {
             inherit name;
@@ -28,8 +29,9 @@
             buildInputs = with pkgs; [ hugo ];
             buildPhase = ''
               hugo new site tmp
-              mkdir -p tmp/themes/${cfg.theme}
-              cp -r $src/* tmp/themes/${cfg.theme}
+              mkdir -p ${themePath}
+              ls ${themePath}
+              cp -r $src/* ${themePath}
               hugo -s tmp -c ${config} -d $out --noBuildLock
             '';
           };
