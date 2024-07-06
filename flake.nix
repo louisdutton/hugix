@@ -42,6 +42,11 @@
             	-t theme \
             	--config ${configFile}
           '';
+
+          # Function to rebuild the derivation and restart Hugo
+          reload = pkgs.writeShellScript "reload" ''
+            echo "Rebuilding..."
+          '';
         in
         {
           apps.${system}.server = {
@@ -52,28 +57,35 @@
           devShells.${system}.default = pkgs.mkShell {
             packages = [
               pkgs.hugo
+              pkgs.entr
               hugoServer
             ];
             shellHook = ''
-              echo "run hugo --help for a list of available commands"
+              # Start watching Nix files
+              # find . -name "*.nix" | ${pkgs.entr}/bin/entr -r sh -c ${reload}
+              # Start Hugo server
+              hugo-server
             '';
           };
 
-          packages.${system}.default = pkgs.stdenv.mkDerivation {
-            inherit buildInputs;
-            name = "hugo-build";
-            dontInstall = true;
-            dontUnpack = true;
-            buildPhase = ''
-              hugo \
-              	-s ${hugoSite} \
-              	-c ${contentDir} \
-              	-t theme
-              	--config ${configFile} \
-              	-d $out \
-              	--noBuildLock \
-              	--minify
-            '';
+          packages.${system} = {
+            source = hugoSite;
+            default = pkgs.stdenv.mkDerivation {
+              inherit buildInputs;
+              name = "hugo-build";
+              dontInstall = true;
+              dontUnpack = true;
+              buildPhase = ''
+                hugo \
+                	-s ${hugoSite} \
+                	-c ${contentDir} \
+                	-t theme
+                	--config ${configFile} \
+                	-d $out \
+                	--noBuildLock \
+                	--minify
+              '';
+            };
           };
         };
     };
