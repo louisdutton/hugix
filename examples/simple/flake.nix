@@ -11,20 +11,15 @@
 
   outputs =
     { hugix, theme, ... }:
-    let
-      name = "website";
+    hugix.lib.hugoSite {
+      inherit theme;
       system = "x86_64-linux";
-    in
-    {
-      packages.${system}.default = hugix.lib.generate {
-        inherit system name theme;
-        content = ./content;
-        cfg = {
-          baseURL = "https://website.com";
-          languageCode = "en-gb";
-          title = "John Doe";
-          theme = "ananke";
-        };
+      contentDir = ./content;
+      config = {
+        baseURL = "https://website.com";
+        languageCode = "en-gb";
+        title = "John Doe";
+        theme = "ananke";
       };
     };
 }
